@@ -1,3 +1,14 @@
+"""Load data, create a model, (optionally train it), and evaluate it
+
+Example:
+```
+python run.py --task WiC --n_epochs 1 --counter_unit epochs --evaluation_freq 0.25 \
+--checkpointing 1 --logging 1 --lr 1e-5
+```
+
+"""
+
+
 import argparse
 import logging
 import os
@@ -9,7 +20,7 @@ from dataloaders import get_dataloaders
 from snorkel.mtl.trainer import Trainer
 from snorkel.mtl.model import MultitaskModel
 from snorkel.mtl.loggers import TensorBoardWriter
-from snorkel.mtl.mtl_default_config import default_config
+from snorkel.mtl.snorkel_config import default_config
 from utils import str2list, str2bool, write_to_file, add_flags_from_config
 
 
