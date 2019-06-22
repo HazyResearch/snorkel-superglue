@@ -1,14 +1,31 @@
 import logging
 import os
 
+import parsers
 from task_config import SuperGLUE_TASK_SPLIT_MAPPING
 from tokenizer import get_tokenizer
 
+from pytorch_pretrained_bert import BertTokenizer
 from snorkel.mtl.data import MultitaskDataLoader
 
-import parsers
 
 logger = logging.getLogger(__name__)
+
+
+def get_dataset(
+    data_dir: str,
+    task_name: str,
+    split: str,
+    tokenizer: BertTokenizer,
+    max_data_samples: int,
+    max_sequence_length: int,
+):
+    jsonl_path = os.path.join(
+        data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
+    )
+    return parsers.parser[task_name](
+        jsonl_path, tokenizer, max_data_samples, max_sequence_length
+    )
 
 
 def get_dataloaders(
@@ -27,21 +44,18 @@ def get_dataloaders(
     tokenizer = get_tokenizer(tokenizer_name)
 
     for split in splits:
-        jsonl_path = os.path.join(
-            data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
-        )
-        dataset = parsers.parser[task_name](
-            jsonl_path, tokenizer, max_data_samples, max_sequence_length
+        dataset = get_dataset(
+            data_dir, task_name, split, tokenizer, max_data_samples, max_sequence_length
         )
         dataloader = MultitaskDataLoader(
-                task_to_label_dict={task_name: "labels"},
-                dataset=dataset,
-                split=split,
-                batch_size=batch_size,
-                shuffle=(split == "train"),
-            )
+            task_to_label_dict={task_name: "labels"},
+            dataset=dataset,
+            split=split,
+            batch_size=batch_size,
+            shuffle=(split == "train"),
+        )
         dataloaders.append(dataloader)
-            
+
         logger.info(f"Loaded {split} for {task_name} with {len(dataset)} samples.")
 
     return dataloaders
