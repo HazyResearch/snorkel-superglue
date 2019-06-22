@@ -2,6 +2,10 @@ import argparse
 import logging
 import os
 
+import pandas as pd
+from snorkel.mtl.data import MultitaskDataset
+
+
 def str2list(v, dim=","):
     return [t.strip() for t in v.split(dim)]
 
@@ -67,3 +71,9 @@ def add_flags_from_config(parser, config_dict):
                 f"Could not add flag for param {param} because it was already present."
             )
     return parser
+
+
+def task_dataset_to_dataframe(dataset: MultitaskDataset) -> pd.DataFrame:
+    data_dict = dataset.X_dict
+    data_dict["labels"] = dataset.Y_dict["labels"]
+    return pd.DataFrame(data_dict)
