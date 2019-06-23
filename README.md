@@ -11,7 +11,7 @@ To use this repository:
 
 3. Set the environment variable SUPERGLUEDATA that points to the directory where the SUPERGLUE data will be stored (we recommend using a directory called `data/` at the root of the repo) by running:
 
-    ```export SUPERGLUEDATA=data/```
+    ```export SUPERGLUEDATA=$(pwd)/data/```
    
 4. Download the SuperGLUE data by running: 
 
