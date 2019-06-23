@@ -1,7 +1,7 @@
 import logging
 import os
 
-import parsers
+import superglue_parsers
 from task_config import SuperGLUE_TASK_SPLIT_MAPPING
 from tokenizer import get_tokenizer
 
@@ -23,7 +23,7 @@ def get_dataset(
     jsonl_path = os.path.join(
         data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
     )
-    return parsers.parser[task_name](
+    return superglue_parsers.parser[task_name](
         jsonl_path, tokenizer, max_data_samples, max_sequence_length
     )
 

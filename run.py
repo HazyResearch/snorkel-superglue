@@ -2,8 +2,7 @@
 
 Example:
 ```
-python run.py --task WiC --n_epochs 1 --counter_unit epochs --evaluation_freq 0.25 \
---checkpointing 1 --logging 1 --lr 1e-5
+python run.py --task WiC --n_epochs 1 --counter_unit epochs --evaluation_freq 0.25 --checkpointing 1 --logging 1 --lr 1e-5
 ```
 
 """
@@ -15,7 +14,7 @@ import os
 import sys
 from functools import partial
 
-import models
+import superglue_tasks
 from dataloaders import get_dataloaders
 from snorkel.mtl.trainer import Trainer
 from snorkel.mtl.model import MultitaskModel
@@ -109,7 +108,7 @@ def main(args):
         )
         dataloaders.extend(task_dataloaders)
 
-        task = models.model[task_name](
+        task = superglue_tasks.task_funcs[task_name](
             args.bert_model, 
             last_hidden_dropout_prob=args.last_hidden_dropout_prob
         )

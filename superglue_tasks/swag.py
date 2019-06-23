@@ -1,8 +1,8 @@
 import sys
 from functools import partial
 
-from modules.bert_module import BertLastCLSModule, BertModule
-from modules.copa_module import ChoiceModule
+from superglue_modules.bert_module import BertLastCLSModule, BertModule
+from superglue_modules.copa_module import ChoiceModule
 from task_config import SuperGLUE_LABEL_MAPPING, SuperGLUE_TASK_METRIC_MAPPING
 from torch import nn
 
@@ -17,7 +17,7 @@ sys.path.append("..")  # Adds higher directory to python modules path.
 TASK_NAME = "SWAG"
 
 
-def build_model(bert_model_name, last_hidden_dropout_prob=0.0):
+def build_task(bert_model_name, last_hidden_dropout_prob=0.0):
 
     bert_module = BertModule(bert_model_name)
     bert_output_dim = 768 if "base" in bert_model_name else 1024

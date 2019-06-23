@@ -1,23 +1,25 @@
 import sys
 from functools import partial
 
-from modules.bert_module import BertLastCLSModule, BertModule
-from modules.copa_module import ChoiceModule
-from task_config import SuperGLUE_LABEL_MAPPING, SuperGLUE_TASK_METRIC_MAPPING
 from torch import nn
 
 from snorkel.mtl.scorer import Scorer
 from snorkel.mtl.task import Task, Operation
+from superglue_modules.bert_module import (BertContactLastCLSWithTwoTokensModule,
+                                 BertModule)
+from task_config import SuperGLUE_LABEL_MAPPING, SuperGLUE_TASK_METRIC_MAPPING
 
 from . import utils
 
 sys.path.append("..")  # Adds higher directory to python modules path.
 
 
-TASK_NAME = "COPA"
+TASK_NAME = "SemCor"
 
 
-def build_model(bert_model_name, last_hidden_dropout_prob=0.0):
+def build_task(bert_model_name, last_hidden_dropout_prob=None):
+    if last_hidden_dropout_prob:
+        raise NotImplementedError(f"TODO: last_hidden_dropout_prob for {TASK_NAME}")
 
     bert_module = BertModule(bert_model_name)
     bert_output_dim = 768 if "base" in bert_model_name else 1024
@@ -44,48 +46,27 @@ def build_model(bert_model_name, last_hidden_dropout_prob=0.0):
         module_pool=nn.ModuleDict(
             {
                 "bert_module": bert_module,
-                f"{TASK_NAME}_feature": BertLastCLSModule(
-                    dropout_prob=last_hidden_dropout_prob
+                f"{TASK_NAME}_feature": BertContactLastCLSWithTwoTokensModule(),
+                f"{TASK_NAME}_pred_head": nn.Linear(
+                    bert_output_dim * 3, task_cardinality
                 ),
-                "linear_module": nn.Linear(bert_output_dim, 1),
-                f"{TASK_NAME}_pred_head": ChoiceModule(task_cardinality),
             }
         ),
         task_flow=[
             Operation(
-                name="choice0",
+                name=f"{TASK_NAME}_bert_module",
                 module_name="bert_module",
-                inputs=[("_input_", "token1_ids")],
+                inputs=[("_input_", "token_ids"),("_input_", "token_segments"),("_input_", "token_masks")],
             ),
             Operation(
-                name="choice1",
-                module_name="bert_module",
-                inputs=[("_input_", "token2_ids")],
-            ),
-            Operation(
-                name="choice0_bert_last_cls",
+                name=f"{TASK_NAME}_feature",
                 module_name=f"{TASK_NAME}_feature",
-                inputs=[("choice0", 0)],
-            ),
-            Operation(
-                name="choice1_bert_last_cls",
-                module_name=f"{TASK_NAME}_feature",
-                inputs=[("choice1", 0)],
-            ),
-            Operation(
-                name="choice0rep",
-                module_name="linear_module",
-                inputs=[("choice0_bert_last_cls", 0)],
-            ),
-            Operation(
-                name="choice1rep",
-                module_name="linear_module",
-                inputs=[("choice1_bert_last_cls", 0)],
+                inputs=[(f"{TASK_NAME}_bert_module", 0),("_input_", "token1_idx"),("_input_", "token2_idx")],
             ),
             Operation(
                 name=f"{TASK_NAME}_pred_head",
                 module_name=f"{TASK_NAME}_pred_head",
-                inputs=[],
+                inputs=[(f"{TASK_NAME}_feature", 0)],
             ),
         ],
         loss_func=loss_fn,
