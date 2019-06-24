@@ -12,6 +12,12 @@ from snorkel.mtl.data import MultitaskDataLoader
 logger = logging.getLogger(__name__)
 
 
+def get_jsonl_path(data_dir: str, task_name: str, split: str):
+    return os.path.join(
+        data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
+    )
+
+
 def get_dataset(
     data_dir: str,
     task_name: str,
@@ -20,6 +26,7 @@ def get_dataset(
     max_data_samples: int,
     max_sequence_length: int,
 ):
+    jsonl_path = get_jsonl_path(data_dir, task_name, split)  
     jsonl_path = os.path.join(
         data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
     )

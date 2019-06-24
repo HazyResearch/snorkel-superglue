@@ -9,6 +9,7 @@ python run.py --task WiC --n_epochs 1 --counter_unit epochs --evaluation_freq 0.
 
 
 import argparse
+import json
 import logging
 import os
 import sys
@@ -16,11 +17,17 @@ from functools import partial
 
 import superglue_tasks
 from dataloaders import get_dataloaders
+from snorkel.model.utils import set_seed
 from snorkel.mtl.trainer import Trainer
 from snorkel.mtl.model import MultitaskModel
 from snorkel.mtl.loggers import TensorBoardWriter
 from snorkel.mtl.snorkel_config import default_config
-from utils import str2list, str2bool, write_to_file, add_flags_from_config
+from snorkel.slicing.apply import PandasSFApplier
+from snorkel.slicing.utils import add_slice_labels, convert_to_slice_tasks
+
+from superglue_slices import slice_func_dict
+from utils import str2list, str2bool, write_to_file, add_flags_from_config, task_dataset_to_dataframe
+
 
 
 logging.basicConfig(level=logging.INFO)
@@ -46,6 +53,10 @@ def add_application_args(parser):
     parser.add_argument("--batch_size", type=int, default=16, help="batch size")
 
     parser.add_argument(
+        "--seed", type=int, default=None, help="Random seed for training"
+    )
+
+    parser.add_argument(
         "--slice_hidden_dim", type=int, default=1024, help="Slice hidden dimension size"
     )
 
@@ -65,6 +76,14 @@ def add_application_args(parser):
         "--train", type=str2bool, default=True, help="Whether to train the model"
     )
 
+    parser.add_argument(
+        "--slice_dict", 
+        type=str, 
+        default=None, 
+        help="Json string dict mapping task_name to list of slicing functions to utilize."
+        # Example usage: --slice_dict '{"WiC": ["slice_verb"]}'
+    )
+
 
 def get_parser():
     # Parse cmdline args and setup environment
@@ -78,6 +97,12 @@ def get_parser():
 
 def main(args):
     config = vars(args)
+
+    # Set random seed for reproducibility
+    if config["seed"]:
+        seed = config["seed"]
+        logging.info(f"Setting seed: {seed}")
+        set_seed(seed)
 
     # Full log path gets created in LogWriter
     log_writer = TensorBoardWriter(log_root=args.log_root, run_name=args.run_name)
@@ -96,7 +121,8 @@ def main(args):
     dataloaders = []
     tasks = []
 
-    for task_name in args.task:
+    task_names = args.task
+    for task_name in task_names:
         task_dataloaders = get_dataloaders(
             data_dir=args.data_dir,
             task_name=task_name,
@@ -113,6 +139,31 @@ def main(args):
             last_hidden_dropout_prob=args.last_hidden_dropout_prob
         )
         tasks.append(task)
+
+    if args.slice_dict:
+        slice_dict = json.loads(str(args.slice_dict))
+        # Ensure this is a mapping str to list
+        for k,v in slice_dict.items(): 
+            assert isinstance(k, str)
+            assert isinstance(v, list)
+
+        slice_tasks = []
+        for task in tasks:
+            # Update slicing tasks
+            slice_names = slice_dict[task.name]
+            slice_tasks.extend(convert_to_slice_tasks(task, slice_names))
+
+            slicing_functions = [slice_func_dict[task_name][slice_name] for slice_name in slice_names]
+            applier = PandasSFApplier(slicing_functions)
+
+            # Update slicing dataloaders
+            for dl in dataloaders:
+                # TODO: we'd like to avoid converting back to a dataframe, 
+                # and instead create the S_matrix first
+                df = task_dataset_to_dataframe(dl.dataset)
+                S_matrix = applier.apply(df)
+                add_slice_labels(dl, task, S_matrix, slice_names)
+        tasks = slice_tasks
 
     # Build model model
     model = MultitaskModel(name=f"SuperGLUE", tasks=tasks)

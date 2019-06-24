@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 TASK_NAME = "WiC"
 
 
-def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
+def get_rows(jsonl_path, max_data_samples):
     logger.info(f"Loading data from {jsonl_path}.")
     rows = [json.loads(row) for row in open(jsonl_path, encoding="utf-8")]
     for i in range(2):
@@ -26,6 +26,16 @@ def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
     if max_data_samples:
         rows = rows[:max_data_samples]
         logger.info(f"Truncating to {max_data_samples} samples.")
+
+    for row in rows:
+        row["sentence1_idx"] = int(row["sentence1_idx"])
+        row["sentence2_idx"] = int(row["sentence2_idx"])
+        row["label"] = row["label"] if "label" in row else True
+    
+    return rows
+
+
+def parse_from_rows(rows, tokenizer, max_sequence_length):
 
     # sentence1 text
     sentence1s = []
@@ -59,9 +69,9 @@ def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
         sentence2 = row["sentence2"]
         word = row["word"]
         pos = row["pos"]
-        sentence1_idx = int(row["sentence1_idx"])
-        sentence2_idx = int(row["sentence2_idx"])
-        label = row["label"] if "label" in row else True
+        sentence1_idx = row["sentence1_idx"]
+        sentence2_idx = row["sentence2_idx"]
+        label = row["label"]
 
         sentence1s.append(sentence1)
         sentence2s.append(sentence2)
@@ -148,3 +158,8 @@ def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
         },
         Y_dict={"labels": labels},
     )
+
+
+def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
+    rows = get_rows(jsonl_path, max_data_samples)
+    return parse_from_rows(rows, tokenizer, max_sequence_length)
