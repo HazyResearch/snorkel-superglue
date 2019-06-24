@@ -27,9 +27,6 @@ def get_dataset(
     max_sequence_length: int,
 ):
     jsonl_path = get_jsonl_path(data_dir, task_name, split)  
-    jsonl_path = os.path.join(
-        data_dir, task_name, SuperGLUE_TASK_SPLIT_MAPPING[task_name][split]
-    )
     return superglue_parsers.parser[task_name](
         jsonl_path, tokenizer, max_data_samples, max_sequence_length
     )
