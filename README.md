@@ -1,2 +1,5 @@
 # snorkel-superglue
-Applying Snorkel to SuperGLUE
+
+[UNDER CONSTRUCTION]
+
+A demonstration of how to use Snorkel on the SuperGLUE benchmark.
