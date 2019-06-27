@@ -40,5 +40,6 @@ To obtain the MNLI dataset for pretraining RTE and CB, we recommend referring to
 
 ## Usage
 - To train a model for one of the SuperGLUE tasks, use `run.py` with settings you specify or `run.sh` to use general defaults we recommend. (e.g., `bash run.sh CB`)
+- See `run.py` for an example of how to add slicing functions to a run.
 - Note that the first training run will automatically download the pretrained BERT module, and that training will be very slow in general without a GPU.
 - Tutorials for using Slicing Functions (SFs), Transformation Functions (TFs), or doing pre-training with an auxiliary task are included under `tutorials/`.
