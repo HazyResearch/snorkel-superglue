@@ -1,0 +1,24 @@
+python run.py \
+    --task WSC \
+    --data_dir ${SUPERGLUEDATA} \
+    --log_path ${LOGPATH} \
+    --seed ${SEED} \
+    --device ${GPU} \
+    --n_epochs 20 \
+    --train_split train \
+    --valid_split val \
+    --optimizer adam \
+    --lr 1e-5 \
+    --grad_clip 5.0 \
+    --eps 1e-8 \
+    --warmup_percentage 0.0 \
+    --counter_unit epoch \
+    --evaluation_freq 1 \
+    --checkpoint_freq 1 \
+    --checkpointing 1 \
+    --checkpoint_metric WSC/SuperGLUE/val/accuracy:max \
+    --checkpoint_task_metrics model/train/all/loss:min \
+    --bert_model bert-large-cased \
+    --batch_size 4 \
+    --max_sequence_length 256 \
+    --dataparallel 0

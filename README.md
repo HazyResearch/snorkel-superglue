@@ -39,5 +39,6 @@ This will download the data for the primary SuperGLUE tasks as well as the SWAG 
 To obtain the MNLI dataset for pretraining RTE and CB, we recommend referring to the starter code for the [GLUE](https://gluebenchmark.com/) benchmark.
 
 ## Usage
-- To train a model for one of the SuperGLUE tasks, run the corresponding script in `scripts/`.
+- To train a model for one of the SuperGLUE tasks, run the corresponding script in `superglue_scripts/` or use `run.py` to use different run settings. 
+Note that training will be very slow without a GPU.
 - Tutorials for using Slicing Functions (SFs), Transformation Functions (TFs), or doing pre-training with an auxiliary task are included under `tutorials/`.
