@@ -11,7 +11,6 @@ elif [ $1 == "CB" ]; then
 else
     METRIC="accuracy"
 fi
-echo $METRIC
 
 python run.py \
     --task ${TASK} \
@@ -24,8 +23,8 @@ python run.py \
     --lr 1e-5 \
     --grad_clip 5.0 \
     --warmup_percentage 0.0 \
-    --counter_unit batches \
-    --evaluation_freq 1 \
+    --counter_unit epochs \
+    --evaluation_freq 0.25 \
     --logging 1 \
     --checkpointing 1 \
     --checkpoint_metric ${TASK}/SuperGLUE/valid/${METRIC}:max \
