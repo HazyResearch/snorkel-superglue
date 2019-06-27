@@ -11,7 +11,6 @@ elif [ $1 == "CB" ]; then
 else
     METRIC="accuracy"
 fi
-echo $METRIC
 
 python run.py \
     --task ${TASK} \
