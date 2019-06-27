@@ -4,12 +4,14 @@ LOGPATH=${3:-logs}
 SEED=${4:-111}
 GPU=${5:-0}
 
-if [ $1 == "MultiRC" ]
-then
+if [ $1 == "MultiRC" ]; then
     METRIC="f1"
+elif [ $1 == "CB" ]; then
+    METRIC="accuracy_macro_f1"
 else
     METRIC="accuracy"
 fi
+echo $METRIC
 
 python run.py \
     --task ${TASK} \
