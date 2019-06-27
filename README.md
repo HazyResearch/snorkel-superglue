@@ -1,18 +1,43 @@
 # snorkel-superglue
 Applying Snorkel to SuperGLUE
 
+This repository includes a demonstration of how to use the [Snorkel](https://github.com/HazyResearch/snorkel) library to achieve a state-of-the-art score on the [SuperGLUE](https://super.gluebenchmark.com/) benchmark. 
+The specific code used to create the submission on the leaderboard is hosted in the [emmental-tutorials](https://github.com/SenWu/emmental-tutorials/tree/master/superglue) repository. 
+This repository contains a refactored version of that code made compatible with the Snorkel API for general exploration.
+
+Best Reference:
+**[Blog post](https://hazyresearch.github.io/snorkel/blog/superglue.html)**
+
 ## Installation
 To use this repository:
-1. Install snorkel (see [snorkel](https://github.com/HazyResearch/snorkel) repo for details)
+1. Install snorkel (see [snorkel](https://github.com/HazyResearch/snorkel) repo for details). This repository will be compatible with v0.9 being released in July and use pip to install it as a package. In the meantime, run the following command from within the `snorkel` repository to checkout the appropriate version:
 
-2. In that virtual environment (or a copy of it if you want to keep them separate), move back to this directory and run:
+    ```
+    git fetch --tags
+    git checkout snorkel-superglue
+    ```
 
-    ```pip install -r requirements.txt```
+2. In the virtual environment you created for `snorkel` (or a copy of it if you want to keep them separate), move back to this directory and run:
 
-3. Set the environment variable SUPERGLUEDATA that points to the directory where the SUPERGLUE data will be stored (we recommend using a directory called `data/` at the root of the repo) by running:
+    ```
+    pip install -r requirements.txt
+    ```
 
-    ```export SUPERGLUEDATA=$(pwd)/data/```
+3. Set the environment variable $SUPERGLUEDATA that points to the directory where the data will be stored. We recommend using a directory called `data/` at the root of the repo) by running:
+
+    ```
+    export SUPERGLUEDATA=$(pwd)/data/
+    ```
    
 4. Download the SuperGLUE data by running: 
 
-    ```python download_superglue_data.py --data_dir $SUPERGLUEDATA --tasks all```
+    ```
+    bash download_superglue_data.sh $SUPERGLUEDATA
+    ```
+
+This will download the data for the primary SuperGLUE tasks as well as the SWAG dataset used for pretraining COPA.
+To obtain the MNLI dataset for pretraining RTE and CB, we recommend referring to the starter code for the [GLUE](https://gluebenchmark.com/) benchmark.
+
+## Usage
+- To train a model for one of the SuperGLUE tasks, run the corresponding script in `scripts/`.
+- Tutorials for using Slicing Functions (SFs), Transformation Functions (TFs), or doing pre-training with an auxiliary task are included under `tutorials/`.
