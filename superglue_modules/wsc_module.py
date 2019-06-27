@@ -33,12 +33,15 @@ class SpanClassifierModule(nn.Module):
         num_spans=2,
         cnn_context=0,
         n_classes=2,
+        dropout=0.1,
     ):
         super().__init__()
 
         self.cnn_context = cnn_context
         self.num_spans = num_spans
         self.proj_dim = proj_dim
+        self.dropout = nn.Dropout(dropout)
+
         self.projs = torch.nn.ModuleList()
 
         for i in range(num_spans):
@@ -58,7 +61,7 @@ class SpanClassifierModule(nn.Module):
 
     def forward(self, feature, span1_idxs, span2_idxs, mask):
         # Apply projection CNN layer for each span of the input sentence
-        sent_embs_t = feature[-1].transpose(1, 2)  # needed for CNN layer
+        sent_embs_t = self.dropout(feature[-1]).transpose(1, 2)  # needed for CNN layer
 
         se_projs = []
         for i in range(self.num_spans):
