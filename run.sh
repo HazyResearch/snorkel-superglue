@@ -1,23 +1,32 @@
+TASK=${1}
+SUPERGLUEDATA=${2:-data}
+LOGPATH=${3:-logs}
+SEED=${4:-111}
+GPU=${5:-0}
+
+if [ $1 == "MultiRC" ]
+then
+    METRIC="f1"
+else
+    METRIC="accuracy"
+fi
+
 python run.py \
-    --task WSC \
+    --task ${TASK} \
     --data_dir ${SUPERGLUEDATA} \
-    --log_path ${LOGPATH} \
+    --log_root ${LOGPATH} \
     --seed ${SEED} \
     --device ${GPU} \
-    --n_epochs 20 \
-    --train_split train \
-    --valid_split val \
+    --n_epochs 10 \
     --optimizer adam \
     --lr 1e-5 \
     --grad_clip 5.0 \
-    --eps 1e-8 \
     --warmup_percentage 0.0 \
-    --counter_unit epoch \
+    --counter_unit batches \
     --evaluation_freq 1 \
-    --checkpoint_freq 1 \
+    --logging 1 \
     --checkpointing 1 \
-    --checkpoint_metric WSC/SuperGLUE/val/accuracy:max \
-    --checkpoint_task_metrics model/train/all/loss:min \
+    --checkpoint_metric ${TASK}/SuperGLUE/valid/${METRIC}:max \
     --bert_model bert-large-cased \
     --batch_size 4 \
     --max_sequence_length 256 \
