@@ -20,7 +20,7 @@ TASK_NAME = "CB"
 
 
 def macro_f1(golds, preds, probs):
-    return metric_score(golds, preds, probs, metric="f1", average="macro")
+    return metric_score(golds, preds, probs, metric="f1")
 
 
 def accuracy_macro_f1(golds, preds, probs):
