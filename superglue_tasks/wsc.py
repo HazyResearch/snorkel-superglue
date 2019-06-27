@@ -1,7 +1,10 @@
 import sys
 from functools import partial
 
-from superglue_modules.bert_module import BertContactLastCLSWithTwoTokensModule, BertModule
+from superglue_modules.bert_module import (
+    BertContactLastCLSWithTwoTokensModule,
+    BertModule,
+)
 from superglue_modules.wsc_module import SpanClassifierModule
 from task_config import SuperGLUE_LABEL_MAPPING, SuperGLUE_TASK_METRIC_MAPPING
 from torch import nn
@@ -58,17 +61,17 @@ def build_task(bert_model_name, last_hidden_dropout_prob=None):
                 inputs=[
                     ("_input_", "token_ids"),
                     ("_input_", "token_segments"),
-                    ("_input_", "token_masks")
+                    ("_input_", "token_masks"),
                 ],
             ),
             Operation(
                 name=f"{TASK_NAME}_pred_head",
-                module_name= f"{TASK_NAME}_pred_head",
+                module_name=f"{TASK_NAME}_pred_head",
                 inputs=[
                     (f"{TASK_NAME}_bert_module", 0),
                     ("_input_", "token1_idx"),
                     ("_input_", "token2_idx"),
-                    ("_input_", "token_masks")
+                    ("_input_", "token_masks"),
                 ],
             ),
         ],

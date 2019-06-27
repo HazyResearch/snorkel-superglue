@@ -31,7 +31,7 @@ def get_rows(jsonl_path, max_data_samples):
         row["sentence1_idx"] = int(row["sentence1_idx"])
         row["sentence2_idx"] = int(row["sentence2_idx"])
         row["label"] = row["label"] if "label" in row else True
-    
+
     return rows
 
 

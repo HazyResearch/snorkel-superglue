@@ -53,7 +53,11 @@ def build_task(bert_model_name, last_hidden_dropout_prob=0.0):
             Operation(
                 name=f"{TASK_NAME}_bert_module",
                 module_name="bert_module",
-                inputs=[("_input_", "token_ids"), ("_input_", "token_segments"), ("_input_", "token_masks"),],
+                inputs=[
+                    ("_input_", "token_ids"),
+                    ("_input_", "token_segments"),
+                    ("_input_", "token_masks"),
+                ],
             ),
             Operation(
                 name=f"{TASK_NAME}_feature",

@@ -5,8 +5,10 @@ from torch import nn
 
 from snorkel.mtl.scorer import Scorer
 from snorkel.mtl.task import Task, Operation
-from superglue_modules.bert_module import (BertContactLastCLSWithTwoTokensModule,
-                                 BertModule)
+from superglue_modules.bert_module import (
+    BertContactLastCLSWithTwoTokensModule,
+    BertModule,
+)
 from task_config import SuperGLUE_LABEL_MAPPING, SuperGLUE_TASK_METRIC_MAPPING
 
 from . import utils
@@ -53,17 +55,25 @@ def build_task(bert_model_name, last_hidden_dropout_prob=None):
             }
         ),
         task_flow=[
-            Operation(                
+            Operation(
                 name=f"{TASK_NAME}_bert_module",
                 module_name="bert_module",
-                inputs=[("_input_", "token_ids"), ("_input_", "token_segments"), ("_input_", "token_masks")],
+                inputs=[
+                    ("_input_", "token_ids"),
+                    ("_input_", "token_segments"),
+                    ("_input_", "token_masks"),
+                ],
             ),
-            Operation(        
+            Operation(
                 name=f"{TASK_NAME}_feature",
                 module_name=f"{TASK_NAME}_feature",
-                inputs=[(f"{TASK_NAME}_bert_module", 0), ("_input_", "token1_idx"), ("_input_", "token2_idx")],
+                inputs=[
+                    (f"{TASK_NAME}_bert_module", 0),
+                    ("_input_", "token1_idx"),
+                    ("_input_", "token2_idx"),
+                ],
             ),
-            Operation(        
+            Operation(
                 name=f"{TASK_NAME}_pred_head",
                 module_name=f"{TASK_NAME}_pred_head",
                 inputs=[(f"{TASK_NAME}_feature", 0)],

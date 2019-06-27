@@ -26,8 +26,13 @@ from snorkel.slicing.apply import PandasSFApplier
 from snorkel.slicing.utils import add_slice_labels, convert_to_slice_tasks
 
 from superglue_slices import slice_func_dict
-from utils import str2list, str2bool, write_to_file, add_flags_from_config, task_dataset_to_dataframe
-
+from utils import (
+    str2list,
+    str2bool,
+    write_to_file,
+    add_flags_from_config,
+    task_dataset_to_dataframe,
+)
 
 
 logging.basicConfig(level=logging.INFO)
@@ -37,8 +42,17 @@ def add_application_args(parser):
 
     parser.add_argument("--task", type=str2list, required=True, help="GLUE tasks")
 
-    parser.add_argument("--log_root", type=str, default="logs", help="Path to root of the logs directory")
-    parser.add_argument("--run_name", type=str, help="Name of the current run (can include subdirectories)")
+    parser.add_argument(
+        "--log_root",
+        type=str,
+        default="logs",
+        help="Path to root of the logs directory",
+    )
+    parser.add_argument(
+        "--run_name",
+        type=str,
+        help="Name of the current run (can include subdirectories)",
+    )
     parser.add_argument(
         "--data_dir", type=str, default="data", help="The path to GLUE dataset"
     )
@@ -65,7 +79,10 @@ def add_application_args(parser):
     )
 
     parser.add_argument(
-        "--last_hidden_dropout_prob", type=float, default=0.0, help="Dropout on last layer of bert."
+        "--last_hidden_dropout_prob",
+        type=float,
+        default=0.0,
+        help="Dropout on last layer of bert.",
     )
 
     parser.add_argument(
@@ -73,9 +90,9 @@ def add_application_args(parser):
     )
 
     parser.add_argument(
-        "--slice_dict", 
-        type=str, 
-        default=None, 
+        "--slice_dict",
+        type=str,
+        default=None,
         help="Json string dict mapping task_name to list of slicing functions to utilize."
         # Example usage: --slice_dict '{"WiC": ["slice_verb"]}'
     )
@@ -103,7 +120,7 @@ def main(args):
     # Full log path gets created in LogWriter
     log_writer = TensorBoardWriter(log_root=args.log_root, run_name=args.run_name)
     config["log_dir"] = log_writer.log_dir
-    
+
     # Save command line argument into file
     cmd_msg = " ".join(sys.argv)
     logging.info(f"COMMAND: {cmd_msg}")
@@ -131,15 +148,14 @@ def main(args):
         dataloaders.extend(task_dataloaders)
 
         task = superglue_tasks.task_funcs[task_name](
-            args.bert_model, 
-            last_hidden_dropout_prob=args.last_hidden_dropout_prob
+            args.bert_model, last_hidden_dropout_prob=args.last_hidden_dropout_prob
         )
         tasks.append(task)
 
     if args.slice_dict:
         slice_dict = json.loads(str(args.slice_dict))
         # Ensure this is a mapping str to list
-        for k,v in slice_dict.items(): 
+        for k, v in slice_dict.items():
             assert isinstance(k, str)
             assert isinstance(v, list)
 
@@ -149,12 +165,14 @@ def main(args):
             slice_names = slice_dict[task.name]
             slice_tasks.extend(convert_to_slice_tasks(task, slice_names))
 
-            slicing_functions = [slice_func_dict[task_name][slice_name] for slice_name in slice_names]
+            slicing_functions = [
+                slice_func_dict[task_name][slice_name] for slice_name in slice_names
+            ]
             applier = PandasSFApplier(slicing_functions)
 
             # Update slicing dataloaders
             for dl in dataloaders:
-                # TODO: we'd like to avoid converting back to a dataframe, 
+                # TODO: we'd like to avoid converting back to a dataframe,
                 # and instead create the S_matrix first
                 df = task_dataset_to_dataframe(dl.dataset)
                 S_matrix = applier.apply(df)
@@ -182,12 +200,10 @@ def main(args):
     # Save best metrics into file
     if args.train:
         logging.info(
-            f"Best metrics: "
-            f"{trainer.log_manager.checkpointer.best_metric_dict}"
+            f"Best metrics: " f"{trainer.log_manager.checkpointer.best_metric_dict}"
         )
         log_writer.write_json(
-            trainer.log_manager.checkpointer.best_metric_dict,
-            "best_metrics.txt",
+            trainer.log_manager.checkpointer.best_metric_dict, "best_metrics.txt"
         )
 
 
@@ -195,5 +211,4 @@ if __name__ == "__main__":
     parser = get_parser()
     add_flags_from_config(parser, default_config)
     args = parser.parse_args()
-    main(args) 
-    
+    main(args)

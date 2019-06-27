@@ -216,7 +216,6 @@ def parse(jsonl_path, tokenizer, max_data_samples, max_sequence_length):
 
     logger.info(f"Max token len {max_len}")
 
-
     return MultitaskDataset(
         name="SuperGLUE",
         X_dict={

@@ -50,10 +50,7 @@ def build_task(bert_model_name, last_hidden_dropout_prob=0.0):
         else []
     )
 
-    custom_metric_funcs = {
-        "macro_f1": macro_f1,
-        "accuracy_macro_f1": accuracy_macro_f1,
-    }
+    custom_metric_funcs = {"macro_f1": macro_f1, "accuracy_macro_f1": accuracy_macro_f1}
 
     loss_fn = partial(utils.ce_loss, f"{TASK_NAME}_pred_head")
     output_fn = partial(utils.output, f"{TASK_NAME}_pred_head")
@@ -73,7 +70,11 @@ def build_task(bert_model_name, last_hidden_dropout_prob=0.0):
             Operation(
                 name=f"{TASK_NAME}_bert_module",
                 module_name="bert_module",
-                inputs=[("_input_", "token_ids"), ("_input_", "token_segments"), ("_input_", "token_masks")],
+                inputs=[
+                    ("_input_", "token_ids"),
+                    ("_input_", "token_segments"),
+                    ("_input_", "token_masks"),
+                ],
             ),
             Operation(
                 name=f"{TASK_NAME}_feature",

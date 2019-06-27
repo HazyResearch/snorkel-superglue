@@ -31,7 +31,7 @@ def get_rows(jsonl_path, max_data_samples):
         row["sentence1_idx"] = int(row["sentence1_idx"])
         row["sentence2_idx"] = int(row["sentence2_idx"])
         row["label"] = row["label"] if "label" in row else True
-    
+
     return rows
 
 
@@ -61,7 +61,6 @@ def parse_from_rows(rows, tokenizer, max_sequence_length):
 
     # Check the maximum token length
     max_len = -1
-
 
     for idx, row in enumerate(rows):
 

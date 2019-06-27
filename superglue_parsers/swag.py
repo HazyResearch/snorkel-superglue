@@ -60,7 +60,7 @@ def parse(csv_path, tokenizer, max_data_samples, max_sequence_length):
         choice2 = ex["ending1"]
         choice3 = ex["ending2"]
         choice4 = ex["ending3"]
-        
+
         label = ex["label"] if "label" in ex else 0
 
         sent1s.append(sent1)
