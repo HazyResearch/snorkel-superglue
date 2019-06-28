@@ -172,8 +172,6 @@ def main(args):
 
             # Update slicing dataloaders
             for dl in dataloaders:
-                # TODO: we'd like to avoid converting back to a dataframe,
-                # and instead create the S_matrix first
                 df = task_dataset_to_dataframe(dl.dataset)
                 S_matrix = applier.apply(df)
                 add_slice_labels(dl, task, S_matrix, slice_names)
