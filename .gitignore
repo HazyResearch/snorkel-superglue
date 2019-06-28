@@ -97,8 +97,18 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
+
 # mkdocs documentation
 /site
 
 # mypy
 .mypy_cache/
+
+# Editors
+.vscode/
+
+# snorkel-superglue
+cache/
+data/
+logs/
+.env/
