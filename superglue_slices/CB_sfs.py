@@ -50,7 +50,6 @@ def slice_long_premise(example, thresh=100):
 
 
 slices = [
-    slice_base,
     slice_temporal_preposition,
     slice_possessive_preposition,
     slice_is_comparative,

@@ -1,1 +1,3 @@
-raise NotImplementedError("Slices n/a for WSC")
+slices = []
+
+slice_func_dict = {slice.name: slice for slice in slices}
