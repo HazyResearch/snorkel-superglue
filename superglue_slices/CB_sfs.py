@@ -1,5 +1,5 @@
 from slicing.slicing_function import slicing_function
-
+from .general_sfs import slice_func_dict as general_slice_func_dict
 
 @slicing_function
 def slice_temporal_preposition(example):
@@ -61,3 +61,4 @@ slices = [
 ]
 
 slice_func_dict = {slice.__name__: slice for slice in slices}
+slice_func_dict.update(general_slice_func_dict)

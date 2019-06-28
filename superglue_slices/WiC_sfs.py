@@ -1,7 +1,6 @@
 from snorkel.slicing.sf import slicing_function
 from .general_sfs import slice_func_dict as general_slice_func_dict
 
-
 @slicing_function()
 def slice_verb(example):
     """Is the target word a verb?"""
