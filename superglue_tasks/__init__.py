@@ -1,4 +1,4 @@
-from . import cb, copa, multirc, rte, wic, wsc, swag, semcor
+from . import cb, copa, multirc, rte, wic, wsc, swag
 
 task_funcs = {
     "CB": cb.build_task,
@@ -8,5 +8,4 @@ task_funcs = {
     "WiC": wic.build_task,
     "WSC": wsc.build_task,
     "SWAG": swag.build_task,
-    "SemCor": semcor.build_task,
 }
