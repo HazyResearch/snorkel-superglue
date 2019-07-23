@@ -1,4 +1,4 @@
-from slicing.slicing_function import slicing_function
+from snorkel.slicing.sf import slicing_function
 from .general_sfs import slice_func_dict as general_slice_func_dict
 
 @slicing_function
@@ -60,5 +60,5 @@ slices = [
     slice_long_premise,
 ]
 
-slice_func_dict = {slice.__name__: slice for slice in slices}
+slice_func_dict = {slice.name: slice for slice in slices}
 slice_func_dict.update(general_slice_func_dict)

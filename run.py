@@ -193,15 +193,15 @@ def main(args):
 
     # Save metrics into file
     logging.info(f"Metrics: {scores}")
-    log_writer.write_json(scores, "metrics.txt")
+    log_writer.write_json(scores, "metrics.json")
 
     # Save best metrics into file
-    if args.train:
+    if args.train and trainer.config["checkpointing"]:
         logging.info(
             f"Best metrics: " f"{trainer.log_manager.checkpointer.best_metric_dict}"
         )
         log_writer.write_json(
-            trainer.log_manager.checkpointer.best_metric_dict, "best_metrics.txt"
+            trainer.log_manager.checkpointer.best_metric_dict, "best_metrics.json"
         )
 
 
