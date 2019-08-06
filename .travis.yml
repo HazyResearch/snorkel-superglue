@@ -16,6 +16,7 @@ before_install:
 install:
   - pip install -U pip
   - pip install -U -r requirements.txt
+  - pip install -U runipy
 
 script:
   - python run.py --task CB --n_epochs 1 --batch_size 2 --max_data_samples 4 --bert_model bert-base-cased --checkpointing 0
@@ -24,6 +25,10 @@ script:
   - python run.py --task RTE --n_epochs 1 --batch_size 2 --max_data_samples 4 --bert_model bert-base-cased --checkpointing 0
   - python run.py --task WiC --n_epochs 1 --batch_size 2 --max_data_samples 4 --bert_model bert-base-cased --checkpointing 0
   - python run.py --task WSC --n_epochs 1 --batch_size 2 --max_data_samples 4 --bert_model bert-base-cased --checkpointing 0
+  - travis_wait 30 runipy tutorials/COPA_pretrain_tutorial.ipynb
+  - travis_wait 30 runipy tutorials/RTE_slicing_tutorial.ipynb
+  - travis_wait 30 runipy tutorials/WiC_augmentation_tutorial.ipynb
+  - travis_wait 30 runipy tutorials/WiC_slicing_tutorial.ipynb
 
 notifications:
   email:
